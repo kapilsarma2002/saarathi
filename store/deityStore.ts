@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type Deity = 'rama' | 'krishna'
+export type Deity = 'rama' | 'krishna'
 
 interface DeityState {
   currentDeity: Deity
