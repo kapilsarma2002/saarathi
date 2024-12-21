@@ -1,10 +1,17 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
+if (!apiKey) {
+  throw new Error('NEXT_PUBLIC_GEMINI_API_KEY is required')
+}
+
+const ai = new GoogleGenerativeAI(apiKey)
 
 export async function chatWithGemini(prompt: string) {
   try {
-    const model = ai.getGenerativeModel({ model: "gemini-pro" });
+    const model = ai.getGenerativeModel({
+      model: 'gemini-pro',
+    })
 
     const chat = model.startChat({
       history: [],
@@ -17,10 +24,10 @@ export async function chatWithGemini(prompt: string) {
     const result = await chat.sendMessage(prompt);
     const response = await result.response;
 
-    console.log('Gemini model:', model);
-    console.log('Gemini chat:', chat);
-    console.log('Gemini result:', result);
-    console.log('Gemini response text:', response.text());
+    // console.log('Gemini model:', model);
+    // console.log('Gemini chat:', chat);
+    // console.log('Gemini result:', result);
+    // console.log('Gemini response text:', response.text());
     
     return response.text();
 
