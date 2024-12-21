@@ -8,6 +8,6 @@ interface DeityState {
 }
 
 export const useDeityStore = create<DeityState>((set) => ({
-  currentDeity: 'rama',
+  currentDeity: 'krishna',
   setDeity: (deity) => set({ currentDeity: deity })
 }))
