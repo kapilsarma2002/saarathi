@@ -16,10 +16,10 @@ export default function Chat() {
   const setDeity = useDeityStore((state) => state.setDeity)
 
   const LoadingDots = () => (
-    <div className="flex space-x-2 p-4 bg-gray-100 rounded-lg animate-pulse">
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+    <div className="flex space-x-2 p-4 bg-[var(--chat-ai)] rounded-lg animate-pulse">
+      <div className="w-2 h-2 bg-[var(--foreground)] opacity-60 rounded-full animate-bounce"></div>
+      <div className="w-2 h-2 bg-[var(--foreground)] opacity-60 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+      <div className="w-2 h-2 bg-[var(--foreground)] opacity-60 rounded-full animate-bounce [animation-delay:0.4s]"></div>
     </div>
   )
 
@@ -42,18 +42,21 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-between h-screen py-6">
+    <div
+      className="flex flex-col items-center justify-between h-screen py-6 
+      bg-white dark:bg-gray-900 
+      text-gray-900 dark:text-gray-100 
+      transition-colors duration-300"
+    >
       <div className="flex flex-col gap-4">
-        {/* <h1 className="text-2xl">Chatting with: {currentDeity}</h1> */}
-
         <div className="flex w-[60vw] justify-center">
           <div className="flex gap-6">
             <button
               onClick={() => setDeity('rama')}
               className={`px-8 py-4 rounded-lg shadow-lg transition-all ${
                 currentDeity === 'rama'
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-white hover:bg-orange-100'
+                  ? 'bg-orange-500 dark:bg-orange-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 hover:bg-orange-100 dark:hover:bg-orange-900/30'
               }`}
             >
               Rama
@@ -63,8 +66,8 @@ export default function Chat() {
               onClick={() => setDeity('krishna')}
               className={`px-8 py-4 rounded-lg shadow-lg transition-all ${
                 currentDeity === 'krishna'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white hover:bg-blue-100'
+                  ? 'bg-blue-500 dark:bg-blue-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/30'
               }`}
             >
               Krishna
@@ -83,10 +86,8 @@ export default function Chat() {
               <div
                 className={`max-w-[80%] p-4 rounded-lg ${
                   message.sender === 'user'
-                    ? currentDeity === 'krishna'
-                      ? 'bg-blue-100'
-                      : 'bg-orange-100'
-                    : 'bg-gray-100'
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : 'bg-blue-50 dark:bg-gray-700'
                 }`}
               >
                 {message.text}
@@ -108,21 +109,27 @@ export default function Chat() {
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
           placeholder="Type your message..."
-          className={`w-full p-4 pr-12 rounded-lg border shadow-sm focus:ring-2
+          className={`w-full sticky p-4 pr-12 rounded-lg
+            border border-gray-200 dark:border-gray-700
+            bg-white dark:bg-gray-800
+            text-gray-900 dark:text-gray-100
+            shadow-lg dark:shadow-gray-900/50
+            focus:ring-2 focus:outline-none text-xl
+            transition-colors duration-200
             ${
               currentDeity === 'krishna'
-                ? 'focus:ring-blue-500'
-                : 'focus:ring-orange-500'
-            } 
-            focus:outline-none text-xl text-gray-600`}
+                ? 'focus:ring-blue-500 dark:focus:ring-blue-600'
+                : 'focus:ring-orange-500 dark:focus:ring-orange-600'
+            }`}
         />
         <button
           onClick={handleSendMessage}
           className={`absolute right-6 top-1/2 -translate-y-1/2 p-2 rounded-full
+            transition-colors duration-200
             ${
               currentDeity === 'krishna'
-                ? 'text-blue-500 hover:text-blue-600'
-                : 'text-orange-500 hover:text-orange-600'
+                ? 'text-blue-500 dark:text-blue-400'
+                : 'text-orange-500 dark:text-orange-400'
             }`}
         >
           <svg
