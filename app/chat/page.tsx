@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDeityStore } from '@/store/deityStore'
 import { chatWithGemini } from '@/utils/ai'
 
@@ -9,21 +9,29 @@ interface Message {
 }
 
 export default function Chat() {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [inputMessage, setInputMessage] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const currentDeity = useDeityStore((state) => state.currentDeity)
   const setDeity = useDeityStore((state) => state.setDeity)
 
+  const [messages, setMessages] = useState<Message[]>([])
+  const [inputMessage, setInputMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])  
+
   const LoadingDots = () => (
-    <div className="flex space-x-2 p-4 bg-[var(--chat-ai)] rounded-lg animate-pulse">
-      <div className="w-2 h-2 bg-[var(--foreground)] opacity-60 rounded-full animate-bounce"></div>
-      <div className="w-2 h-2 bg-[var(--foreground)] opacity-60 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-      <div className="w-2 h-2 bg-[var(--foreground)] opacity-60 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+    <div className="flex space-x-2 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
+      <div className="w-2 h-2 rounded-full bg-gray-600 dark:bg-gray-400 animate-bounce"></div>
+      <div className="w-2 h-2 rounded-full bg-gray-600 dark:bg-gray-400 animate-bounce [animation-delay:0.2s]"></div>
+      <div className="w-2 h-2 rounded-full bg-gray-600 dark:bg-gray-400 animate-bounce [animation-delay:0.4s]"></div>
     </div>
   )
 
   const handleSendMessage = async () => {
+    setInputMessage('')
     if (!inputMessage.trim()) return
 
     setMessages((prev) => [...prev, { text: inputMessage, sender: 'user' }])
@@ -38,7 +46,6 @@ export default function Chat() {
       setIsLoading(false)
     }
 
-    setInputMessage('')
   }
 
   return (
@@ -75,7 +82,18 @@ export default function Chat() {
           </div>
         </div>
 
-        <div className="h-[calc(100vh-200px)] w-[40vw] flex-1 overflow-y-auto p-4 space-y-4 mx-auto">
+        <div
+          className="w-[40vw] h-[calc(100vh-12rem)] 
+          overflow-y-auto 
+          p-4 space-y-4 mx-auto
+          scrollbar-thin 
+          scrollbar-track-transparent
+          scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600
+          scrollbar-thumb-rounded-full
+          hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500
+          transition-colors duration-300"
+        >
+          {' '}
           {messages.map((message, index) => (
             <div
               key={index}
@@ -99,10 +117,11 @@ export default function Chat() {
               <LoadingDots />
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
-      <div className="relative w-full max-w-2xl px-4">
+      <div className="fixed bottom-0 w-full max-w-2xl pt-2 p-4 bg-inherit">
         <input
           type="text"
           value={inputMessage}
