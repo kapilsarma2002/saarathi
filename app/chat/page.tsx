@@ -2,25 +2,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDeityStore } from '@/store/deityStore'
 import { chatWithGemini } from '@/utils/ai'
-
-interface Message {
-  text: string
-  sender: 'user' | 'ai'
-}
+import { Message } from '@/utils/constants'
 
 export default function Chat() {
   const currentDeity = useDeityStore((state) => state.currentDeity)
   const setDeity = useDeityStore((state) => state.setDeity)
 
-  const [messages, setMessages] = useState<Message[]>([])
+  const [krishnaMessages, setKrishnaMessages] = useState<Message[]>([])
+  const [ramaMessages, setRamaMessages] = useState<Message[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const currentMessages =
+      currentDeity === 'krishna' ? krishnaMessages : ramaMessages
+    const setMessages =
+      currentDeity === 'krishna' ? setKrishnaMessages : setRamaMessages
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])  
+    useEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [krishnaMessages, ramaMessages])
+
+ 
 
   const LoadingDots = () => (
     <div className="flex space-x-2 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
@@ -38,14 +41,13 @@ export default function Chat() {
     setIsLoading(true)
 
     try {
-      const response = await chatWithGemini(inputMessage)
+      const response = await chatWithGemini(inputMessage, currentDeity)
       setMessages((prev) => [...prev, { text: response, sender: 'ai' }])
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setIsLoading(false)
     }
-
   }
 
   return (
@@ -83,7 +85,7 @@ export default function Chat() {
         </div>
 
         <div
-          className="w-[40vw] h-[calc(100vh-12rem)] 
+          className="w-[50vw] h-[calc(100vh-12rem)] 
           overflow-y-auto 
           p-4 space-y-4 mx-auto
           scrollbar-thin 
@@ -94,7 +96,7 @@ export default function Chat() {
           transition-colors duration-300"
         >
           {' '}
-          {messages.map((message, index) => (
+          {currentMessages.map((message, index) => (
             <div
               key={index}
               className={`flex ${
